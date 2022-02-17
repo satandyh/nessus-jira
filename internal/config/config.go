@@ -5,6 +5,7 @@ package config
 
 import (
   "os"
+  "fmt"
   "github.com/spf13/pflag"
   "github.com/spf13/viper"
 )
@@ -17,7 +18,7 @@ type Conf struct {
   confFlags *pflag.FlagSet
 }
 
-func newConfig() *Conf {
+func NewConfig() *Conf {
   c := new(Conf)
 
   viper.SetConfigName("config.yaml")

@@ -1,25 +1,27 @@
 package main
 
 import (
-  "os"
-  "time"
+  //"os"
+  //"time"
   "fmt"
+  "github.com/satandyh/nessus-jira/internal/config"
+  //"github.com/satandyh/nessus-jira/internal/logger"
+
+
   //"github.com/rs/zerolog"
   //"github.com/rs/zerolog/log"
   //jira "github.com/andygrunwald/go-jira"
   //"github.com/spf13/viper"
-  "github.com/satandyh/nessus-jira/internal"
 )
 
-var conf *Conf
-
+var conf conf.*Conf
 
 func main() {
   /*
   1. STEP LOGGING
   */
   //unix time everywhere
-  zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+  //zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 
   //colors for cli
   //log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339})
@@ -40,9 +42,10 @@ func main() {
   /*
   2. STEP CONFIG
   */
-  conf = config.newConfig()
 
+  
+  var conf = config.NewConfig()
 
-  fmt.Println(conf.JiraUrl)
+  fmt.Println(conf.JiraPass)
 
 }
