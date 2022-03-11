@@ -9,14 +9,23 @@ import (
   "gopkg.in/natefinch/lumberjack.v2"
   "os"
   "path"
+  "path/filepath"
   "io"
+  "time"
 )
 
+/*
+What need
+1. log levels
+2. log to stdout with syslog compatible format
+3. log to file with json format
+4. rotation log files
+*/
+
 // Configuration for logging
-type Config struct {
+type LogConfig struct {
   // Enable console logging
   ConsoleLoggingEnabled bool
-
   // EncodeLogsAsJson makes the log framework log JSON
   EncodeLogsAsJson bool
   // FileLoggingEnabled makes the framework log to a file
@@ -32,52 +41,45 @@ type Config struct {
   MaxBackups int
   // MaxAge the max age in days to keep a logfile
   MaxAge int
+  // LogLevel as in https://en.wikipedia.org/wiki/Syslog
+  LogLevel int
 }
 
 type Logger struct {
   *zerolog.Logger
 }
 
+func Configure(config LogConfig) *Logger {
+  ex, ex_err := os.Executable()
+  if ex_err != nil {
+    panic(ex_err)
+  }
+  selfName := filepath.Base(ex)
 
-// Configure sets up the logging framework
-//
-// In production, the container logs will be collected and file logging should be disabled. However,
-// during development it's nicer to see logs as text and optionally write to a file when debugging
-// problems in the containerized pipeline
-//
-// The output log file will be located at /var/log/service-xyz/service-xyz.log and
-// will be rolled according to configuration set.
-func Configure(config Config) *Logger {
   var writers []io.Writer
 
   if config.ConsoleLoggingEnabled {
-    writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr})
+    writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
   }
   if config.FileLoggingEnabled {
     writers = append(writers, newRollingFile(config))
   }
   mw := io.MultiWriter(writers...)
 
-  // zerolog.SetGlobalLevel(zerolog.DebugLevel)
-  logger := zerolog.New(mw).With().Timestamp().Logger()
-
-  logger.Info().
-    Bool("fileLogging", config.FileLoggingEnabled).
-    Bool("jsonLogOutput", config.EncodeLogsAsJson).
-    Str("logDirectory", config.Directory).
-    Str("fileName", config.Filename).
-    Int("maxSizeMB", config.MaxSize).
-    Int("maxBackups", config.MaxBackups).
-    Int("maxAgeInDays", config.MaxAge).
-    Msg("logging configured")
+  logger := zerolog.
+    New(mw).
+    With().
+    Timestamp().
+    Str("process", selfName).
+    Logger()
 
   return &Logger{
     Logger: &logger,
   }
 }
 
-func newRollingFile(config Config) io.Writer {
-  if err := os.MkdirAll(config.Directory, 0744); err != nil {
+func newRollingFile(config LogConfig) io.Writer {
+  if err := os.MkdirAll(config.Directory, 0750); err != nil {
     log.Error().Err(err).Str("path", config.Directory).Msg("can't create log directory")
     return nil
   }

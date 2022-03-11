@@ -13,10 +13,16 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-config*.json
-output.csv
+
+# no configs
+config/*.yml
+config/*.yaml
+config/*.toml
+config/*.json
+config/*.pem
+
+# no compiled files
+nessus-jira
 
 # no any other languages
 *.py
-
-nessus-jira.yaml
