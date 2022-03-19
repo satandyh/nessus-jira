@@ -11,7 +11,6 @@ import (
 
 	config "github.com/satandyh/nessus-jira/internal/config"
 	logging "github.com/satandyh/nessus-jira/internal/logger"
-	//jira "github.com/andygrunwald/go-jira"
 )
 
 // Global vars for logs
@@ -80,6 +79,9 @@ func main() {
 
 	// 2
 	conf := config.NewConfig()
+
+	//!!!test only!!!
+	JiraTest(conf.Jira)
 	// 3.1
 	scans := GetScans(conf.Nessus.Conn)
 	// 3.2.1 - 3.2.3
@@ -146,14 +148,14 @@ func main() {
 		}
 		logger.Info().
 			Str("module", "main").
-			Msg("Cauth next signal - " + s.String())
+			Msg("Caught next signal - " + s.String())
 		os.Exit(0)
 	}()
 
 	// 4
 	// because we have several task let's make them through goroutines
 	var waitAllReports sync.WaitGroup
-	for k, _ := range actualScans {
+	for k := range actualScans {
 		// make pointer to main structure to work with it
 		ps := &actualScans[k]
 		//add another one counter to sync

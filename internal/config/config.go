@@ -42,12 +42,15 @@ type ConfCsv struct {
 		Risk     string
 	}
 }
+
+type ConfJira struct {
+	Url  string
+	User string
+	Pass string
+}
+
 type Conf struct {
-	Jira struct {
-		Url  string
-		User string
-		Pass string
-	}
+	Jira ConfJira
 	Data ConfData
 	Smtp struct {
 		Url        string
