@@ -58,6 +58,7 @@ type CompletedScan struct {
 	Id         int
 	ScanExport ScanExport
 	FileName   string
+	c_res      int
 }
 
 // get scan results

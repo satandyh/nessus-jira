@@ -105,6 +105,8 @@ func ParseCsv(task *CompletedScan, c config.ConfCsv) {
 						Msg("Error writing record to file")
 					Exitsig <- syscall.SIGHUP
 				}
+				// add 1 to counter only we have match our filter
+				task.c_res++
 			}
 		}
 		// also can do something

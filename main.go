@@ -70,18 +70,17 @@ func main() {
 	  6.1 create task for each separate scan result in necessary project
 	*/
 	/*
-	  7. STEP FINISH WORK
-	  7.1 make scan read status to 'true'
-	  7.2 delete lock_task_id
-	  7.2 delete scan reports and archives from tmp - all formats csv zip json
-	  7.3
+		ALL NOT NEED NOW
+		7. STEP FINISH WORK
+		7.1 make scan read status to 'true'
+		7.2 delete lock_task_id
+		7.2 delete scan reports and archives from tmp - all formats csv zip json
+		7.3
 	*/
 
 	// 2
 	conf := config.NewConfig()
 
-	//!!!test only!!!
-	JiraTest(conf.Jira)
 	// 3.1
 	scans := GetScans(conf.Nessus.Conn)
 	// 3.2.1 - 3.2.3
@@ -211,6 +210,8 @@ func main() {
 		}()
 	}
 	waitAllReports.Wait()
+	// 6.1
+	JiraCreateTask(conf.Jira, conf, actualScans)
 
 	logger.Info().
 		Str("module", "main").

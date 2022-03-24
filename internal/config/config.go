@@ -13,9 +13,12 @@ import (
 )
 
 type NessusScan struct {
-	Project  string
-	Watchers []string
-	TaskName []string
+	Project     string
+	Watchers    []string
+	TaskName    []string
+	Description string
+	IssueName   string
+	Type        string
 }
 
 type NessusConn struct {

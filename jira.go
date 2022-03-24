@@ -1,13 +1,15 @@
 package main
 
 import (
-	"fmt"
+	"io"
+	"os"
 
 	"github.com/andygrunwald/go-jira"
 	"github.com/satandyh/nessus-jira/internal/config"
 )
 
-func JiraTest(c config.ConfJira) {
+func JiraCreateTask(c config.ConfJira, scans config.Conf, tasks []CompletedScan) {
+	//jiraClient, _ := jira.NewClient(nil, "https://issues.apache.org/jira/")
 	tp := jira.BasicAuthTransport{
 		Username: c.User,
 		Password: c.Pass,
@@ -20,41 +22,76 @@ func JiraTest(c config.ConfJira) {
 			Err(cl_err).
 			Msg("")
 	}
-	issue, resp, issue_err := jiraClient.Issue.Get("XXXX", nil)
-	if issue_err != nil {
-		logger.Error().
-			Str("module", "jira").
-			Err(issue_err).
-			Msg("")
-	}
-	if resp.Response.StatusCode != 200 {
-		logger.Error().
-			Str("module", "jira").
-			Msg(resp.Response.Status)
-	}
+	// cycle thru all projects
+	for _, proj := range scans.Nessus.Scans {
+		// cycle thru all task in projects
+		for _, newTask := range proj.TaskName {
+			//read attachment file
+			var r io.Reader
+			for _, task := range tasks {
+				// create task only if
+				// - name task the same like in our results
+				// - there are some results
+				if newTask == task.Name && task.c_res != 0 {
+					f, f_err := os.Open(task.FileName + "_parsed")
+					if f_err != nil {
+						logger.Error().
+							Str("module", "jira").
+							Err(f_err).
+							Msg("")
+					}
+					defer f.Close()
+					r = f
 
-	fmt.Printf("%s: %+v\n", issue.Key, issue.Fields.Summary)
-	fmt.Printf("Type: %s\n", issue.Fields.Type.Name)
-	fmt.Printf("Priority: %s\n", issue.Fields.Priority.Name)
+					i := jira.Issue{
+						Fields: &jira.IssueFields{
+							Description: proj.Description,
+							Type: jira.IssueType{
+								Name: proj.Type,
+							},
+							Project: jira.Project{
+								Key: proj.Project,
+							},
+							Summary: proj.IssueName + " " + newTask,
+						},
+					}
+					// create task
+					issue, resp, is_err := jiraClient.Issue.Create(&i)
+					if is_err != nil {
+						bodyBytes, _ := io.ReadAll(resp.Body)
+						bodyString := string(bodyBytes)
+						logger.Error().
+							Str("module", "jira").
+							Err(is_err).
+							Msg(bodyString)
+					}
+					if resp.Response.StatusCode != 201 {
+						logger.Error().
+							Str("module", "jira").
+							Msg(resp.Response.Status)
+					}
 
+					// add watchers
+					for _, watName := range proj.Watchers {
+						wat_resp, wat_err := jiraClient.Issue.AddWatcher(issue.ID, watName)
+						if wat_err != nil {
+							logger.Error().
+								Str("module", "jira").
+								Msg(wat_resp.Response.Status)
+						}
+					}
+					// add attachment
+					_, att_resp, att_err := jiraClient.Issue.PostAttachment(issue.ID, r, newTask+".csv")
+					if att_err != nil {
+						logger.Error().
+							Str("module", "jira").
+							Msg(att_resp.Response.Status)
+					}
+					logger.Info().
+						Str("module", "jira").
+						Msg("Created " + issue.Key + " task for group " + task.Name)
+				}
+			}
+		}
+	}
 }
-
-/*
-func JiraCreateTask(c config.ConfJira, scans config.Conf, tasks []CompletedScan) {
-	//jiraClient, _ := jira.NewClient(nil, "https://issues.apache.org/jira/")
-	tp := jira.BasicAuthTransport{
-		Username: "username",
-		Password: "token",
-	}
-	jiraClient, _ := jira.NewClient(tp.Client(), c.Url)
-	issue, _, _ := jiraClient.Issue.Get("MESOS-3325", nil)
-
-	fmt.Printf("%s: %+v\n", issue.Key, issue.Fields.Summary)
-	fmt.Printf("Type: %s\n", issue.Fields.Type.Name)
-	fmt.Printf("Priority: %s\n", issue.Fields.Priority.Name)
-
-	// MESOS-3325: Running mesos-slave@0.23 in a container causes slave to be lost after a restart
-	// Type: Bug
-	// Priority: Critical
-}
-*/
