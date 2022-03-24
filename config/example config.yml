@@ -1,0 +1,88 @@
+# jira connect part
+# all task goes thru nessus scans config
+jira:
+  user: "lol"
+  pass: "kek"
+  url: "https://issues.apache.org/jira/"
+
+# data to store on local server
+data:
+  dir: "./data"
+  #send_dir:
+  log: "./config"
+
+# mail config
+smtp:
+  url:
+  user:
+  pass:
+  fromaddr:
+  toaddr:
+    - "x"
+    - "y"
+  recipients:
+    - "z"
+    - "w"
+imap:
+  url:
+  user:
+  pass:
+
+# nessus scan config
+## for test I use bm-vm-nessus
+nessus:
+  conn:
+    user: ""
+    pass: ""
+    url: "https://nessus:8894/"
+    tokenAccess: "supersecret"
+    tokenSecret: "pupertoken"
+    certPub: "/absolute/path/cert.pem"
+    certPriv: "/absolute/path/key.pem"
+    certCA: "/absolute/path/ca.pem"
+  scans:
+    # jira project where create task
+    - project: "XXX"
+      # watchers to add to task
+      watchers:
+        - "best.friend1"
+        - "best.friend2"
+      # task names to search in nessus
+      taskname:
+        - "scan_me"
+      description: "Solve this staff with Critical - please"
+      issuename: "Solve this staff with Critical"
+      type: "Task"
+    - project: "YYY"
+      # watchers to add to task
+      watchers:
+        - "my.mom"
+      # task names to search in nessus
+      taskname:
+        - "scan_me2"
+        - "scan_me3"
+      description: "Solve this staff with Critical - please one more time"
+      issuename: "Solve this staff with UPD"
+      type: "Crit"
+# default csv config
+csv:
+  # columns to save
+  header:
+    - "Plugin ID"
+    - "CVE"
+    - "CVSS v2.0 Base Score"
+    - "CVSS v3.0 Base Score"
+    - "Risk"
+    - "Host"
+    - "Protocol"
+    - "Port"
+    - "Name"
+    - "Synopsis"
+    - "Description"
+    - "Solution"
+    - "See Also"
+    - "Plugin Output"
+  score:
+    minCVSS3: 6.2
+    minCVSS2: 7
+    risk: "Critical"

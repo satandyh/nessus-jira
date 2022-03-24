@@ -15,7 +15,8 @@
 # vendor/
 
 # no configs
-config/*.yml
+config/config*.yml
+config/nessus-jira*.yml
 config/*.yaml
 config/*.toml
 config/*.json
