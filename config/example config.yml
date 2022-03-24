@@ -29,7 +29,6 @@ imap:
   pass:
 
 # nessus scan config
-## for test I use bm-vm-nessus
 nessus:
   conn:
     user: ""
