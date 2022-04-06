@@ -19,6 +19,7 @@ type NessusScan struct {
 	Description string
 	IssueName   string
 	Type        string
+	Component   string
 }
 
 type NessusConn struct {

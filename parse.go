@@ -35,6 +35,7 @@ func ParseCsv(task *CompletedScan, c config.ConfCsv) {
 	defer new_file.Close()
 	// create csv writer
 	w := csv.NewWriter(new_file)
+	w.Comma = ';'
 	defer w.Flush()
 	// write header
 	if head_err := w.Write(c.Header); head_err != nil {

@@ -52,6 +52,7 @@ nessus:
       description: "Solve this staff with Critical - please"
       issuename: "Solve this staff with Critical"
       type: "Task"
+      component: ""
     - project: "YYY"
       # watchers to add to task
       watchers:
@@ -63,6 +64,7 @@ nessus:
       description: "Solve this staff with Critical - please one more time"
       issuename: "Solve this staff with UPD"
       type: "Crit"
+      component: "Keep"
 # default csv config
 csv:
   # columns to save

@@ -42,7 +42,6 @@ func JiraCreateTask(c config.ConfJira, scans config.Conf, tasks []CompletedScan)
 					}
 					defer f.Close()
 					r = f
-
 					i := jira.Issue{
 						Fields: &jira.IssueFields{
 							Description: proj.Description,
@@ -54,6 +53,9 @@ func JiraCreateTask(c config.ConfJira, scans config.Conf, tasks []CompletedScan)
 							},
 							Summary: proj.IssueName + " " + newTask,
 						},
+					}
+					if len(proj.Component) > 0 {
+						i.Fields.Components = append(i.Fields.Components, &jira.Component{Name: proj.Component})
 					}
 					// create task
 					issue, resp, is_err := jiraClient.Issue.Create(&i)
