@@ -48,9 +48,10 @@ type ConfCsv struct {
 }
 
 type ConfJira struct {
-	Url  string
-	User string
-	Pass string
+	Url   string
+	User  string
+	Pass  string
+	Token string
 }
 
 type Conf struct {

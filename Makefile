@@ -7,7 +7,7 @@ all: clean fmt lint vet test build
 
 .PHONY: build
 build:
-	@CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -o ${BINARY_NAME} -a
+	@CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -o ${BINARY_NAME} -a -ldflags="-w -s" -gcflags=all="-l -B" 
 #	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -o ${BINARY_NAME}-darwin -a
 
 .PHONY: run

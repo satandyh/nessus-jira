@@ -3,6 +3,7 @@
 jira:
   user: "lol"
   pass: "kek"
+  token: "bip"
   url: "https://issues.apache.org/jira/"
 
 # data to store on local server

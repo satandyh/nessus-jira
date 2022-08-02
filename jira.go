@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"net/http"
 	"os"
 
 	"github.com/andygrunwald/go-jira"
@@ -9,13 +10,24 @@ import (
 )
 
 func JiraCreateTask(c config.ConfJira, scans config.Conf, tasks []CompletedScan) {
-	//jiraClient, _ := jira.NewClient(nil, "https://issues.apache.org/jira/")
-	tp := jira.BasicAuthTransport{
-		Username: c.User,
-		Password: c.Pass,
+	// check if PAT jira token is present then use it
+	// else use user/password
+	var tp *http.Client
+	var jiraClient *jira.Client
+	if len(c.Token) > 2 {
+		pat := jira.PATAuthTransport{
+			Token: c.Token,
+		}
+		tp = pat.Client()
+	} else {
+		pat := jira.BasicAuthTransport{
+			Username: c.User,
+			Password: c.Pass,
+		}
+		tp = pat.Client()
 	}
 
-	jiraClient, cl_err := jira.NewClient(tp.Client(), c.Url)
+	jiraClient, cl_err := jira.NewClient(tp, c.Url)
 	if cl_err != nil {
 		logger.Error().
 			Str("module", "jira").
