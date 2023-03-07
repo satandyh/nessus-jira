@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -64,7 +63,7 @@ type CompletedScan struct {
 // get scan results
 func GetScans(conn config.NessusConn) Scans {
 	// create connection with our options
-	caCert, cacert_err := ioutil.ReadFile(conn.CertCA)
+	caCert, cacert_err := os.ReadFile(conn.CertCA)
 	if cacert_err != nil {
 		logger.Error().
 			Err(cacert_err).
@@ -122,7 +121,7 @@ func GetScans(conn config.NessusConn) Scans {
 	}
 	defer resp.Body.Close()
 	// TODO checks for response code != 2xx
-	body, read_err := ioutil.ReadAll(resp.Body)
+	body, read_err := io.ReadAll(resp.Body)
 	if read_err != nil {
 		logger.Error().
 			Err(read_err).
@@ -170,7 +169,7 @@ func CheckStatus(c config.Conf, s Scans) []CompletedScan {
 
 func CreateScanReport(conn config.NessusConn, task *CompletedScan) ScanExport {
 	// create connection with our options
-	caCert, cacert_err := ioutil.ReadFile(conn.CertCA)
+	caCert, cacert_err := os.ReadFile(conn.CertCA)
 	if cacert_err != nil {
 		logger.Error().
 			Err(cacert_err).
@@ -237,7 +236,7 @@ func CreateScanReport(conn config.NessusConn, task *CompletedScan) ScanExport {
 			Msg("Something dark happens with Your server")
 		Exitsig <- syscall.SIGHUP
 	}
-	body, read_err := ioutil.ReadAll(resp.Body)
+	body, read_err := io.ReadAll(resp.Body)
 	if read_err != nil {
 		logger.Error().
 			Err(read_err).
@@ -259,7 +258,7 @@ func CreateScanReport(conn config.NessusConn, task *CompletedScan) ScanExport {
 
 func CheckReportStatus(conn config.NessusConn, task *CompletedScan) string {
 	// create connection with our options
-	caCert, cacert_err := ioutil.ReadFile(conn.CertCA)
+	caCert, cacert_err := os.ReadFile(conn.CertCA)
 	if cacert_err != nil {
 		logger.Error().
 			Err(cacert_err).
@@ -316,7 +315,7 @@ func CheckReportStatus(conn config.NessusConn, task *CompletedScan) string {
 	}
 	defer resp.Body.Close()
 	// TODO checks for response code != 2xx
-	body, read_err := ioutil.ReadAll(resp.Body)
+	body, read_err := io.ReadAll(resp.Body)
 	if read_err != nil {
 		logger.Error().
 			Err(read_err).
@@ -339,7 +338,7 @@ func CheckReportStatus(conn config.NessusConn, task *CompletedScan) string {
 
 func GetReport(conn config.NessusConn, dir config.ConfData, task *CompletedScan) string {
 	// create connection with our options
-	caCert, cacert_err := ioutil.ReadFile(conn.CertCA)
+	caCert, cacert_err := os.ReadFile(conn.CertCA)
 	if cacert_err != nil {
 		logger.Error().
 			Err(cacert_err).
@@ -407,7 +406,7 @@ func GetReport(conn config.NessusConn, dir config.ConfData, task *CompletedScan)
 	}
 
 	outfile, outfile_err := os.Create(filepath.Join(dir.Dir, task.Name+".csv"))
-	//  ioutil.ReadAll(resp.Body)
+	//  io.ReadAll(resp.Body)
 	if outfile_err != nil {
 		logger.Error().
 			Err(outfile_err).
@@ -430,7 +429,7 @@ func GetReport(conn config.NessusConn, dir config.ConfData, task *CompletedScan)
 
 func ChangeScanStatus(conn config.NessusConn, task *CompletedScan) {
 	// create connection with our options
-	caCert, cacert_err := ioutil.ReadFile(conn.CertCA)
+	caCert, cacert_err := os.ReadFile(conn.CertCA)
 	if cacert_err != nil {
 		logger.Error().
 			Err(cacert_err).

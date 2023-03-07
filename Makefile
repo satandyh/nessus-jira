@@ -35,3 +35,8 @@ fmt: ## do format
 .PHONY: test
 test:
 	@echo "No any test. Play as you want."
+
+.PHONY: update
+test:
+	@echo "Update golang dependencies. Look at https://golang.cafe/blog/how-to-upgrade-golang-dependencies.html"
+	@go get -u ./...
