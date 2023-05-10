@@ -1,5 +1,3 @@
-GOPATH=$(shell go env GOPATH)
-LINTER_CMD=${GOPATH}/bin/golangci-lint
 BINARY_NAME=nessus-jira
 
 .PHONY: all
@@ -22,7 +20,7 @@ clean:
 
 .PHONY: lint
 lint: ## lint your code!
-	@${LINTER_CMD} run
+	@golangci-lint run
 
 .PHONY: vet
 vet: ## check for suspicious constructions
@@ -37,6 +35,6 @@ test:
 	@echo "No any test. Play as you want."
 
 .PHONY: update
-test:
+update:
 	@echo "Update golang dependencies. Look at https://golang.cafe/blog/how-to-upgrade-golang-dependencies.html"
 	@go get -u ./...
