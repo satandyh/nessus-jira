@@ -166,7 +166,7 @@ func main() {
 			defer waitAllReports.Done()
 			// 4.1
 			// make random lag before start
-			rand.Seed(time.Now().UnixNano())
+			rand.New(rand.NewSource(time.Now().UnixNano()))
 			rd := time.Duration(rand.Intn(5))
 			time.Sleep(rd * time.Second)
 			ps.ScanExport = CreateScanReport(conf.Nessus.Conn, ps)
